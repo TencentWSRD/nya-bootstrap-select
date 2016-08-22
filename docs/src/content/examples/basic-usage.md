@@ -9,31 +9,31 @@ To make multiple selection. just add `multiple` into `nya-bs-select` element.
 
 ###Static Options
 
-Static Options don't change. you need to add `nya-bs-option` class to each of your `<li>` element to make them as options. Beside, you also need to use `data-value` attribute to specify the value of each option.
+Static Options don't change. you need to add `nya-bs-option` class to each of your `<li>` element to make them as options. Beside, you also need to use `value` attribute to specify the value of each option.
 
 <example>
 <file name="index.html">
 <p class="alert-info">Single Selection, model is <span>{{model}}</span></p>
 <ol id="singleSelection" class="nya-bs-select" ng-model="model">
-  <li class="nya-bs-option" data-value="a">
+  <li class="nya-bs-option" value="a">
     <a>Alpha</a>
   </li>
-  <li class="nya-bs-option" data-value="b">
+  <li class="nya-bs-option" value="b">
     <a>Bravo</a>
   </li>
-  <li class="nya-bs-option" data-value="c">
+  <li class="nya-bs-option" value="c">
     <a>Charlie</a>
   </li>
 </ol>
 <p class="alert-info">Multiple Selection, model2 is <span>{{model2}}</span></p>
 <ol id="multipleSelection" class="nya-bs-select" ng-model="model2" multiple>
-  <li class="nya-bs-option" data-value="a">
+  <li class="nya-bs-option" value="a">
     <a>Alpha</a>
   </li>
-  <li class="nya-bs-option" data-value="b">
+  <li class="nya-bs-option" value="b">
     <a>Bravo</a>
   </li>
-  <li class="nya-bs-option" data-value="c">
+  <li class="nya-bs-option" value="c">
     <a>Charlie</a>
   </li>
 </ol>

@@ -1,6 +1,5 @@
 /**
  * A service for configuration. the configuration is shared globally.
- * Testing ci build --jpmckearin
  */
 nyaBsSelect.provider('nyaBsConfig', function() {
 
@@ -11,7 +10,7 @@ nyaBsSelect.provider('nyaBsConfig', function() {
     'en-us': {
       defaultNoneSelection: 'Nothing selected',
       noSearchResult: 'NO SEARCH RESULT',
-      numberItemSelected: '%d items selected',
+      numberItemSelected: '%d item selected',
       selectAll: 'Select All',
       deselectAll: 'Deselect All'
     }

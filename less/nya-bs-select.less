@@ -32,35 +32,16 @@
     }
   }
 
-  .dropdown-toggle {
+  & > .btn {
     width: 100%;
     padding-right: 25px;
 
-    .filter-option,
-    .special-title {
+    .filter-option {
+      display: inline-block;
       overflow: hidden;
       width: 100%;
       text-align: left;
     }
-
-    .filter-option {
-      display: inline-block;
-    }
-
-    .special-title {
-      display: none;
-    }
-
-    &.show-special-title {
-      .filter-option {
-        display: none;
-      }
-
-      .special-title {
-        display: inline-block;
-      }
-    }
-
 
     .caret {
       position: absolute;
@@ -282,8 +263,7 @@
   }
 
   &.fit-width .btn {
-    .filter-option,
-    .special-title {
+    .filter-option {
       position: static;
     }
 

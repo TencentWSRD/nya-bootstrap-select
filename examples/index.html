@@ -25,9 +25,6 @@
       <li>
         <a href="localization/manual.html">Localized Manual Examples</a>
       </li>
-      <li>
-        <a href="localization/angular-translate-filter.html">Angular Translate filter Example</a>
-      </li>
     </ul>
   </div>
 </nav>
@@ -524,50 +521,6 @@
         </div>
       </div>
 
-    </form>
-
-    <h3>ngModelOptions</h3>
-    <p>should work with ngModelOptions</p>
-
-    <form class="form-inline">
-      <ol id="ngModelOptionsExample" class="nya-bs-select" ng-model="model9" multiple ng-model-options="{updateOn: 'blur', debounce: 200}">
-        <li nya-bs-option="option in options2">
-          <a>
-            {{option}}
-            <span class="glyphicon glyphicon-ok check-mark"></span>
-          </a>
-        </li>
-      </ol>
-      <div class="form-static-control">{{model9}}</div>
-    </form>
-
-    <h3>actionsBoxExample</h3>
-    <p>should work with action-box="true"</p>
-
-    <form class="form-inline">
-      <ol id="actionsBoxExample" class="nya-bs-select" ng-model="model10" multiple actions-box="true">
-        <li nya-bs-option="option in options2">
-          <a>
-            {{option}}
-            <span class="glyphicon glyphicon-ok check-mark"></span>
-          </a>
-        </li>
-      </ol>
-      <div class="form-static-control">{{model10}}</div>
-    </form>
-
-    <p>should work with action-box="true" and live-search="true"</p>
-
-    <form class="form-inline">
-      <ol id="actionBoxWithLiveSearchExample" class="nya-bs-select" ng-model="model11" multiple actions-box="true" data-live-search="true">
-        <li nya-bs-option="option in options2">
-          <a>
-            {{option}}
-            <span class="glyphicon glyphicon-ok check-mark"></span>
-          </a>
-        </li>
-      </ol>
-      <div class="form-static-control">{{model11}}</div>
     </form>
   </section>
 </div>

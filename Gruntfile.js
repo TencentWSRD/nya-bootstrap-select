@@ -266,18 +266,11 @@ module.exports = function(grunt) {
           configFile: 'e2e-test/config.js'
         }
       }
-    },
-
-    update_bower_version: {
-      bower: {
-        src: 'bower.json'
-      }
     }
   });
 
   require('./docs/tasks/markdown')(grunt);
   require('./tasks/remove-logging')(grunt);
-  require('./tasks/update_bower_version')(grunt);
 
   // Creates the 'serve' task
   grunt.registerTask('serve', [
@@ -299,8 +292,7 @@ module.exports = function(grunt) {
     'concat:dist',
     'remove-logging:dist',
     'uglify:dist',
-    'cssmin:dist',
-    'update_bower_version:bower'
+    'cssmin:dist'
   ]);
 
   grunt.registerTask('buildDocs', [

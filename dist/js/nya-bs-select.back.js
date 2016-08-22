@@ -336,7 +336,7 @@
 
     // default localized text. cannot be modified.
     var defaultText = {
-      'default': {
+      'en-us': {
         defaultNoneSelection: 'Nothing selected',
         noSearchResult: 'NO SEARCH RESULT',
         numberItemSelected: '%d item selected',
@@ -349,87 +349,46 @@
     var interfaceText = deepCopy(defaultText);
 
     /**
-     * vinsonxiao修改于2016.7.19, 为了满足各个select拥有各自自定义模板
-     * 由于原来的实现原理是在$compile阶段将需要的DOM插入,然后由外部controller的scope来compile, 所以无法在directive的link阶段通过scope传入模板
-     * 所以仍然是全局设置各个模板, 然后在声明directive时设置custom-tpls参数, 指定选择自定义模板的名字
-     * (注意, 这样配置是为了可以让设置的html中的指令可以被正确compile, 如果只是需要展示找不到的字符串不需要编译的话, 直接设置no-search-result='你需要展示的文本')
-     * @example
-     * ```javascript
-     * ['nyaBsConfigProvider', function(nyaBsConfigProvider) {
-     *    nyaBsConfigProvider.initTpl({
-     *      default: {
-     *        defaultNoneSelection: 'Nothing selected',
-     *        noSearchResult: 'NO SEARCH RESULT',
-     *        numberItemSelected: '%d item selected',
-     *        selectAll: 'Select All',
-     *        deselectAll: 'Deselect All'
-     *      },
-     *      scm: {
-     *        noSearchResultTpl: '此版本库不存在，现在去<a class="no-padding" ng-click="openScmEdit($event, true,
-     *   data.repositoryType, data.basic.repositoryType)">创建</a>'
-     *      }
-     *    )
-     * }];
-     *
-     * ```html
-     * <!-- 设置custom-tpls="scm", 在compile阶段直接读取tAttrs的字符串属性来获取对应的模板, 未设置的值由默认的值填充 -->
-     *  <ol class="nya-bs-select bootstrap-select form-control" ng-model="data.basic.repositoryId" required
-     *      title="选择版本库" size="8" name="repositoryId" ng-if="data.basic.repositoryId" data-search="true"
-     *      filter="customFilter" custom-tpls="scm">
-     *    <li nya-bs-option="row in scmList" value="row.id">
-     *      <a title="{{row.svn}}">{{ row.svn }}</a>
-     *    </li>
-     *  </ol>
+     * Merge with default localized text.
+     * @param localeId a string formatted as languageId-countryId
+     * @param obj localized text object.
      */
-    // /**
-    //  * Merge with default localized text.
-    //  * @param localeId a string formatted as languageId-countryId
-    //  * @param obj localized text object.
-    //  */
-    // this.setLocalizedText = function (localeId, obj) {
-    //   if (!localeId) {
-    //     throw new Error('localeId must be a string formatted as languageId-countryId');
-    //   }
-    //   if (!interfaceText[localeId]) {
-    //     interfaceText[localeId] = {};
-    //   }
-    //   interfaceText[localeId] = extend(interfaceText[localeId], obj);
-    // };
-
-    // /**
-    //  * Force to use a special locale id. if localeId is null. reset to user-agent locale.
-    //  * @param localeId a string formatted as languageId-countryId
-    //  */
-    // this.useLocale = function (localeId) {
-    //   locale = localeId;
-    // };
-
-    this.initTpl = function (settings) {
-      if (settings) {
-        interfaceText = extend(interfaceText, settings);
+    this.setLocalizedText = function (localeId, obj) {
+      if (!localeId) {
+        throw new Error('localeId must be a string formatted as languageId-countryId');
       }
+      if (!interfaceText[localeId]) {
+        interfaceText[localeId] = {};
+      }
+      interfaceText[localeId] = extend(interfaceText[localeId], obj);
     };
 
-    this.getTpl = function (name) {
-      var localizedText;
-      if (name && name in interfaceText) {
-        localizedText = interfaceText[name];
-      } else {
-        localizedText = interfaceText.default;
-      }
-
-      return extend(defaultText.default, localizedText);
+    /**
+     * Force to use a special locale id. if localeId is null. reset to user-agent locale.
+     * @param localeId a string formatted as languageId-countryId
+     */
+    this.useLocale = function (localeId) {
+      locale = localeId;
     };
 
     /**
      * get the localized text according current locale or forced locale
      * @returns localizedText
      */
-    this.$get = function () {
-      return {
-        getTpl: this.getTpl
+    this.$get = [
+      '$locale', function ($locale) {
+        var localizedText;
+        if (locale) {
+          localizedText = interfaceText[locale];
+        } else {
+          localizedText = interfaceText[$locale.id];
+        }
+        if (!localizedText) {
+          localizedText = defaultText['en-us'];
+        }
+        return localizedText;
       }
-    }
+    ];
 
   });
 
@@ -455,7 +414,7 @@
 
   });
   nyaBsSelect.directive('nyaBsSelect', [
-    '$parse', '$document', '$timeout', 'nyaBsConfig', '$compile', function ($parse, $document, $timeout, nyaBsConfig, $compile) {
+    '$parse', '$document', '$timeout', 'nyaBsConfig', function ($parse, $document, $timeout, nyaBsConfig) {
 
       var DEFAULT_NONE_SELECTION = 'Nothing selected';
 
@@ -488,12 +447,10 @@
         controller: 'nyaBsSelectCtrl',
         scope: {
           filter: '=',
-          disabled: '=?',
-          noSearchResultTpl: '=?',
-          noSearchResult: '@?',
-          defaultNoneSelection: '=?'
+          disabled: '=?'
         },
         compile: function nyaBsSelectCompile(tElement, tAttrs) {
+
           tElement.addClass('btn-group');
 
           var getDefaultNoneSelectionContent = function () {
@@ -532,10 +489,7 @@
             liElement,
             localizedText = nyaBsConfig,
             isMultiple = typeof tAttrs.multiple !== 'undefined',
-            nyaBsOptionValue,
-            _NO_SEARCH_RESULT = NO_SEARCH_RESULT,
-            _ACTIONS_BOX = ACTIONS_BOX,
-            _localizedText;
+            nyaBsOptionValue;
 
           classList = getClassList(tElement[0]);
           classList.forEach(function (className) {
@@ -576,39 +530,35 @@
           }
 
           if (tAttrs.search === 'true') {
-            if (tAttrs.noSearchResult) {
-              _NO_SEARCH_RESULT = _NO_SEARCH_RESULT.replace('NO SEARCH RESULT', tAttrs.noSearchResult);
-            } else {
-              _localizedText = localizedText.getTpl(tAttrs.customTpls);
-
-              // set localized text
-              if (_localizedText.noSearchResultTpl) {
-                _NO_SEARCH_RESULT = _NO_SEARCH_RESULT.replace('NO SEARCH RESULT', _localizedText.noSearchResultTpl);
-              } else if (_localizedText.noSearchResult) {
-                _NO_SEARCH_RESULT = _NO_SEARCH_RESULT.replace('NO SEARCH RESULT', _localizedText.noSearchResult);
-              }
-            }
             searchBox = jqLite(SEARCH_BOX);
-            noSearchResult = jqLite(_NO_SEARCH_RESULT);
+
+            // set localized text
+            if (localizedText.noSearchResultTpl) {
+              NO_SEARCH_RESULT = NO_SEARCH_RESULT.replace('NO SEARCH RESULT', localizedText.noSearchResultTpl);
+            } else if (localizedText.noSearchResult) {
+              NO_SEARCH_RESULT = NO_SEARCH_RESULT.replace('NO SEARCH RESULT', localizedText.noSearchResult);
+            }
+
+            noSearchResult = jqLite(NO_SEARCH_RESULT);
             dropdownContainer.append(searchBox);
             dropdownMenu.append(noSearchResult);
           }
 
           if (tAttrs.actionsBox === 'true' && isMultiple) {
             // set localizedText
-            if (_localizedText.selectAllTpl) {
-              _ACTIONS_BOX = _ACTIONS_BOX.replace('SELECT ALL', _localizedText.selectAllTpl);
+            if (localizedText.selectAllTpl) {
+              ACTIONS_BOX = ACTIONS_BOX.replace('SELECT ALL', localizedText.selectAllTpl);
             } else if (localizedText.selectAll) {
-              _ACTIONS_BOX = _ACTIONS_BOX.replace('SELECT ALL', _localizedText.selectAll);
+              ACTIONS_BOX = ACTIONS_BOX.replace('SELECT ALL', localizedText.selectAll);
             }
 
             if (localizedText.deselectAllTpl) {
-              _ACTIONS_BOX = _ACTIONS_BOX.replace('DESELECT ALL', _localizedText.deselectAllTpl);
+              ACTIONS_BOX = ACTIONS_BOX.replace('DESELECT ALL', localizedText.deselectAllTpl);
             } else if (localizedText.selectAll) {
-              _ACTIONS_BOX = _ACTIONS_BOX.replace('DESELECT ALL', _localizedText.deselectAll);
+              ACTIONS_BOX = ACTIONS_BOX.replace('DESELECT ALL', localizedText.deselectAll);
             }
 
-            actionsBox = jqLite(_ACTIONS_BOX);
+            actionsBox = jqLite(ACTIONS_BOX);
             dropdownContainer.append(actionsBox);
           }
 
@@ -629,8 +579,7 @@
               valueExpFn,
               valueExpGetter = $parse(nyaBsSelectCtrl.valueExp),
               isMultiple = typeof $attrs.multiple !== 'undefined',
-              filter = $scope.filter,
-              $NO_SEARCH_RESULT;
+              filter = $scope.filter;
 
             // find element from current $element root. because the compiled element may be detached from DOM tree by
             // ng-if or ng-switch.
@@ -680,7 +629,7 @@
             //   });
             // }
 
-            if ($scope.disabled) {
+            if (scope.disabled) {
               dropdownToggle.addClass('disabled');
               previousTabIndex = dropdownToggle.attr('tabindex');
               dropdownToggle.attr('tabindex', '-1');
