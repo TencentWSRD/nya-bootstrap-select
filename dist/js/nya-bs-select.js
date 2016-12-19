@@ -660,40 +660,41 @@
             }
             // if($attrs.name == 'keystoreId') debugger
 
-            // 由监听attr改为监听scope
-            // if (typeof $attrs.disabled !== 'undefined') {
-            //   $scope.$watch($attrs.disabled, function (disabled) {
-            //     if (!!disabled) {
-            //       dropdownToggle.addClass('disabled');
-            //       previousTabIndex = dropdownToggle.attr('tabindex');
-            //       dropdownToggle.attr('tabindex', '-1');
-            //       isDisabled = true;
-            //     } else {
-            //       dropdownToggle.removeClass('disabled');
-            //       if (previousTabIndex) {
-            //         dropdownToggle.attr('tabindex', previousTabIndex);
-            //       } else {
-            //         dropdownToggle.removeAttr('tabindex');
-            //       }
-            //       isDisabled = false;
-            //     }
-            //   });
-            // }
+            //监听disabled，可以禁用选择列表
 
-            if ($scope.disabled) {
-              dropdownToggle.addClass('disabled');
-              previousTabIndex = dropdownToggle.attr('tabindex');
-              dropdownToggle.attr('tabindex', '-1');
-              isDisabled = true;
-            } else {
-              dropdownToggle.removeClass('disabled');
-              if (previousTabIndex) {
-                dropdownToggle.attr('tabindex', previousTabIndex);
-              } else {
-                dropdownToggle.removeAttr('tabindex');
-              }
-              isDisabled = false;
-            }
+             if (typeof $attrs.disabled !== 'undefined') {
+               $scope.$watch('disabled', function (disabled) {
+                 if (!!disabled) {
+                   dropdownToggle.addClass('disabled');
+                   previousTabIndex = dropdownToggle.attr('tabindex');
+                   dropdownToggle.attr('tabindex', '-1');
+                   isDisabled = true;
+                 } else {
+                   dropdownToggle.removeClass('disabled');
+                   if (previousTabIndex) {
+                     dropdownToggle.attr('tabindex', previousTabIndex);
+                   } else {
+                     dropdownToggle.removeAttr('tabindex');
+                   }
+                   isDisabled = false;
+                 }
+               });
+             }
+
+            // if ($scope.disabled) {
+            //   dropdownToggle.addClass('disabled');
+            //   previousTabIndex = dropdownToggle.attr('tabindex');
+            //   dropdownToggle.attr('tabindex', '-1');
+            //   isDisabled = true;
+            // } else {
+            //   dropdownToggle.removeClass('disabled');
+            //   if (previousTabIndex) {
+            //     dropdownToggle.attr('tabindex', previousTabIndex);
+            //   } else {
+            //     dropdownToggle.removeAttr('tabindex');
+            //   }
+            //   isDisabled = false;
+            // }
 
             /**
              * Do some check on modelValue. remove no existing value
